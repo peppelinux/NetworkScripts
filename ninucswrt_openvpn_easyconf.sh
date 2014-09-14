@@ -1,7 +1,5 @@
 #!/bin/sh
 
-
-
 # /etc/openvpn or /etc/easy-rsa/keys ?
 RSAPATH="/etc/openvpn/"
 
@@ -32,43 +30,49 @@ else
   exit 1
 fi
 
+
 printf "\n\nPlease enter your VPN network in this format:\n\t100.65.0.0 255.255.255.0\n"
 read NETWORK
-echo "You entered: $NETWORK"
+printf "You entered: $NETWORK\n\n"
 
-uci set openvpn.sample_server=openvpn
-uci set openvpn.sample_server.enabled=1
-uci set openvpn.sample_server.port=1194
-uci set openvpn.sample_server.proto=udp
-uci set openvpn.sample_server.dev=tun
-uci set openvpn.sample_server.ca=/etc/openvpn/$SERVERNAME/ca.crt
-uci set openvpn.sample_server.cert=/etc/openvpn/$SERVERNAME/server.crt
-uci set openvpn.sample_server.key=/etc/openvpn/$SERVERNAME/server.key
-uci set openvpn.sample_server.dh=/etc/openvpn/$SERVERNAME/dh1024.pem
-uci set openvpn.sample_server.server="$NETWORK"
-uci set openvpn.sample_server.ifconfig_pool_persist=/tmp/ipp.txt
-uci set openvpn.sample_server.push="redirect-gateway def1"
-uci set openvpn.sample_server.keepalive="10 120"
-uci set openvpn.sample_server.cipher=none
-uci set openvpn.sample_server.comp_lzo=1
-uci set openvpn.sample_server.persist_key=1
-uci set openvpn.sample_server.persist_tun=1
-uci set openvpn.sample_server.status=/tmp/openvpn-status.log
-uci set openvpn.sample_server.verb=3
 
-uci show openvpn.sample_server
+# disabilito eventualmente il vecchio
+/etc/init.d/openvpn stop
+uci set openvpn.sample_server.enabled=0
+#
+
+uci set openvpn.$SERVERNAME=openvpn
+uci set openvpn.$SERVERNAME.enabled=1
+uci set openvpn.$SERVERNAME.port=1194
+uci set openvpn.$SERVERNAME.proto=udp
+uci set openvpn.$SERVERNAME.dev=tun
+uci set openvpn.$SERVERNAME.ca=/etc/openvpn/$SERVERNAME/ca.crt
+uci set openvpn.$SERVERNAME.cert=/etc/openvpn/$SERVERNAME/server.crt
+uci set openvpn.$SERVERNAME.key=/etc/openvpn/$SERVERNAME/server.key
+uci set openvpn.$SERVERNAME.dh=/etc/openvpn/$SERVERNAME/dh1024.pem
+uci set openvpn.$SERVERNAME.server="$NETWORK"
+uci set openvpn.$SERVERNAME.ifconfig_pool_persist=/tmp/ipp.txt
+uci set openvpn.$SERVERNAME.push="redirect-gateway def1"
+uci set openvpn.$SERVERNAME.keepalive="10 120"
+uci set openvpn.$SERVERNAME.cipher=none
+uci set openvpn.$SERVERNAME.comp_lzo=1
+uci set openvpn.$SERVERNAME.persist_key=1
+uci set openvpn.$SERVERNAME.persist_tun=1
+uci set openvpn.$SERVERNAME.status=/tmp/openvpn-status.log
+uci set openvpn.$SERVERNAME.verb=3
+
+uci show openvpn.$SERVERNAME
 
 echo "all the informations are correct ? (y/n)"
 read RESPONSE
 if [ "$RESPONSE" == "y" ]; then
    uci commit openvpn
 else
-   uci delete openvpn.sample_server
+   uci delete openvpn.$SERVERNAME
 fi
 
 /etc/init.d/openvpn reload
-/etc/init.d/openvpn stop
 /etc/init.d/openvpn start
+sleep 1
+logread | tail -16 | grep openvpn
 
-sleep 2
-logread | grep openvpn
