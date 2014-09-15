@@ -66,9 +66,13 @@ uci show openvpn.$SERVERNAME
 echo "all the informations are correct ? (y/n)"
 read RESPONSE
 if [ "$RESPONSE" == "y" ]; then
+   uci set network.VPN=interface
+   uci set network.VPN.ifname=tun0
+   uci set network.VPN.proto=none
    uci commit openvpn
+   uci commit network
 else
-   uci delete openvpn.$SERVERNAME
+   uci revert openvpn
 fi
 
 /etc/init.d/openvpn reload
