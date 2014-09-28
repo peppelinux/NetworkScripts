@@ -19,8 +19,8 @@ echo "$KEY_PATH"
 if [ -d "$KEY_PATH" ]; then
   echo "this is the content of key directory of $SERVERNAME"
   ls $KEY_PATH
-  if [ ! -f "${KEY_PATH}$SERVERNAME.crt" ]; then 
-    echo "ERROR: $SERVERNAME.crt not found !"; exit  
+  if [ ! -f "${KEY_PATH}server.crt" ]; then 
+    echo "ERROR: server.crt not found !"; exit  
   fi
   if [ ! -f "${KEY_PATH}ca.crt" ]; then 
     echo "ERROR: ca.crt not found !"; exit 
