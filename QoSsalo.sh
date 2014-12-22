@@ -1,5 +1,11 @@
 export IFNAME=tun0;
 
+# openWRT dependencies
+# kmod-sched
+# kmod-sched-connmark
+# tc
+# kmod-sched-esfq
+
 insmod sch_htb
 insmod sch_sfq
 insmod cls_fw
