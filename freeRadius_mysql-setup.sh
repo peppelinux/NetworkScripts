@@ -6,8 +6,8 @@
 # eapol_test: https://ttboa.wordpress.com/2014/09/26/freeradius-on-debian-7/
 # http://networkradius.com/doc/FreeRADIUS-Implementation-Ch6.pdf
 
-aptitude install slapd ldap-utils ldap-account-manager
-#aptitude install freeradius freeradius-common freeradius-krb5 freeradius-ldap freeradius-mysql freeradius-postgresql freeradius-utils
+#aptitude install slapd ldap-utils ldap-account-manager
+aptitude install freeradius freeradius-common freeradius-krb5 freeradius-ldap freeradius-mysql freeradius-postgresql freeradius-utils
 
 # 
 
