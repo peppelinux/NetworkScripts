@@ -39,6 +39,13 @@ sed -i -e 's|authorize {|authorize {\nsql|' /etc/freeradius/sites-available/defa
 sed -i -e 's|session {|session {\nsql|' /etc/freeradius/sites-available/default
 sed -i -e 's|accounting {|accounting {\nsql|' /etc/freeradius/sites-available/default
 
+# logging facilities
+sed -i -e 's|auth_badpass = no|auth_badpass = yes|g' /etc/freeradius/radiusd.conf
+sed -i -e 's|auth_goodpass = no|auth_goodpass = yes|g' /etc/freeradius/radiusd.conf
+sed -i -e 's|auth = no|auth = yes|g' /etc/freeradius/radiusd.conf
+
+
+
 # = client secret ===============
 sed -i 's/testing123/'$RAD_SECRET'/' /etc/freeradius/clients.conf
 
