@@ -6,8 +6,8 @@
 # eapol_test: https://ttboa.wordpress.com/2014/09/26/freeradius-on-debian-7/
 # http://networkradius.com/doc/FreeRADIUS-Implementation-Ch6.pdf
 
-#aptitude install slapd ldap-utils ldap-account-manager
-aptitude install freeradius freeradius-common freeradius-krb5 freeradius-ldap freeradius-mysql freeradius-postgresql freeradius-utils
+#aptitude install slapd ldap-utils ldap-account-manager freeradius-ldap freeradius-mysql freeradius-postgresql
+aptitude install freeradius freeradius-common freeradius-krb5 freeradius-utils
 
 # 
 
@@ -58,7 +58,7 @@ mysql -uradius --password=$RADIUS_PWD radius  -e "USE radius; \
 INSERT INTO radcheck ("username", "attribute", "op", "value") \
 VALUES                 ('rad_usrtest','User-Password',':=','wuuserpas76');"
 
-radtest rad_usrtest wuazza56 127.0.0.1 0 $RAD_SECRET
+#radtest rad_usrtest wuazza56 127.0.0.1 0 $RAD_SECRET
 
 # debug
 #service freeradius stop
