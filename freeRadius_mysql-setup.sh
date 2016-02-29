@@ -44,6 +44,10 @@ sed -i -e 's|auth_badpass = no|auth_badpass = yes|g' /etc/freeradius/radiusd.con
 sed -i -e 's|auth_goodpass = no|auth_goodpass = yes|g' /etc/freeradius/radiusd.conf
 sed -i -e 's|auth = no|auth = yes|g' /etc/freeradius/radiusd.conf
 
+# accounting (not tested)
+sed -i -e 's|\t#  See "Authentication Logging Queries" in sql.conf\n\t#sql|#See "Authentication Logging Queries" in sql.conf\n\tsql|g' /etc/freeradius/sites-enabled/inner-tunnel 
+sed -i -e 's|\t#  See "Authentication Logging Queries" in sql.conf\n\t#sql|#See "Authentication Logging Queries" in sql.conf\n\tsql|g' /etc/freeradius/sites-enabled/defaults
+
 
 
 # = client secret ===============
@@ -63,7 +67,7 @@ journalctl -xn
 echo "Testing configuration"
 mysql -uradius --password=$RADIUS_PWD radius  -e "USE radius; \
 INSERT INTO radcheck ("username", "attribute", "op", "value") \
-VALUES                 ('rad_usrtest','User-Password',':=','wuuserpas76');"
+VALUES                 ('rad_usrtest','Cleartext-Password',':=','wuuserpas76');"
 
 #radtest rad_usrtest wuazza56 127.0.0.1 0 $RAD_SECRET
 
