@@ -6,6 +6,9 @@
 # eapol_test: https://ttboa.wordpress.com/2014/09/26/freeradius-on-debian-7/
 # http://networkradius.com/doc/FreeRADIUS-Implementation-Ch6.pdf
 
+
+set -x
+
 #aptitude install slapd ldap-utils ldap-account-manager freeradius-ldap freeradius-mysql freeradius-postgresql
 aptitude install freeradius freeradius-common freeradius-krb5 freeradius-utils
 
@@ -48,7 +51,8 @@ sed -i -e 's|auth = no|auth = yes|g' /etc/freeradius/radiusd.conf
 sed -i -e 's|\t#  See "Authentication Logging Queries" in sql.conf\n\t#sql|#See "Authentication Logging Queries" in sql.conf\n\tsql|g' /etc/freeradius/sites-enabled/inner-tunnel 
 sed -i -e 's|\t#  See "Authentication Logging Queries" in sql.conf\n\t#sql|#See "Authentication Logging Queries" in sql.conf\n\tsql|g' /etc/freeradius/sites-enabled/defaults
 
-
+# logging sql when in debug mode
+sed -i -e 's|sqltrace = no|sqltrace = yes|g' /etc/freeradius/sql.conf
 
 # = client secret ===============
 sed -i 's/testing123/'$RAD_SECRET'/' /etc/freeradius/clients.conf
