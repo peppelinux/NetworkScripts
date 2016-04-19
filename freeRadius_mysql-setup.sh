@@ -10,7 +10,7 @@
 set -x
 
 #aptitude install slapd ldap-utils ldap-account-manager freeradius-ldap freeradius-mysql freeradius-postgresql
-aptitude install freeradius freeradius-common freeradius-krb5 freeradius-utils
+aptitude install freeradius freeradius-common freeradius-krb5 freeradius-utils freeradius-mysql
 
 # 
 
