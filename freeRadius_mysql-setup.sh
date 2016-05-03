@@ -6,6 +6,7 @@
 # eapol_test: https://ttboa.wordpress.com/2014/09/26/freeradius-on-debian-7/
 # http://networkradius.com/doc/FreeRADIUS-Implementation-Ch6.pdf
 
+# Tested on freeRadius 2.2.5 - Debian jessie
 
 set -x
 
