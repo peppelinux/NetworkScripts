@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# The MIT License (MIT)
+# Copyright (c) 2016 giuseppe.demarco@unical.it
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#set -x
+
+VLAN_RANGE=$(seq 2 24)
+INT=eth2
+
+# wide range scan... it will take a lot of time.
+NETDSCVR_RANGE="" 
+
+# Uncomment next option if you need to specify ranges of local networks
+#NETDSCVR_RANGE="-r 10.87.0.0/16,10.97.0.0/16"
+#NETDSCVR_RANGE="-r 10.97.0.0/16"
+
+#Check for netdiscover
+which netdiscover >/dev/null
+if [ $? -eq 1 ]
+	then
+		echo ""
+		echo -e "\e[01;31m[!]\e[00m Unable to find the required netdiscover program, install and try again."
+		exit 1
+fi
+#Check for vconfig
+which vconfig >/dev/null
+if [ $? -eq 1 ]
+	then
+		echo ""
+		echo -e "\e[01;31m[!]\e[00m Unable to find the required vconfig program (vlan suite), install and try again."
+		exit 1
+fi
+
+
+echo "Testing VLAN range: " $VLAN_RANGE
+
+for i in $VLAN_RANGE; do
+    vconfig add $INT $i
+    ifconfig $INT.$i up
+    echo "running on "$INT"."$i
+    netdiscover -i $INT.$i $NETDSCVR_RANGE -P
+    ifconfig $INT.$i down
+    vconfig rem $INT.$i
+    echo "\n"
+done
