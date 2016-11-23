@@ -13,18 +13,10 @@ IFACE=eth0
 # external network interface
 PUB_IF=eth0
 
-MYNET1=160.97.12.0/24
-MYNODE1=160.97.12.223
+MYNET1=172.9.12.0/24
+MYNODE1=172.9.12.223
 
-TRUSTED_NODES=160.97.12.223,\
-160.97.12.222,\
-93.64.220.214,\
-160.97.12.225,\
-160.97.12.224,\
-160.97.12.17,\
-160.97.12.18,\
-160.97.12.86,\
-160.97.12.21,\
+TRUSTED_NODES=172.9.12.223,\
 192.168.15.203,192.168.15.1,192.168.15.98
 
 # comalca tunnel
@@ -116,16 +108,6 @@ $IPT -A INDESIDERATI  -d $FAKE_NODES  -j DROP
 ##############################
 ##############################
 echo "DoS filters"
-#$IPT -A INPUT -p tcp -m tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
-#$IPT -A INPUT -p tcp -m tcp --tcp-flags SYN,RST SYN,RST -j DROP
-
-# forse
-#~ $IPT -A INPUT -p tcp        --tcp-flags ALL ACK,RST,SYN,FIN -j DROP
-#~ $IPT -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
-#~ $IPT -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
-
-# problematico
-#$IPT -A INPUT -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -j DROP
 
 $IPT  -A INPUT -i ${PUB_IF} -p tcp --tcp-flags ALL FIN,URG,PSH -j DROP
 $IPT  -A INPUT -i ${PUB_IF} -p tcp --tcp-flags ALL ALL -j DROP
