@@ -271,8 +271,6 @@ $IPT -t nat -A PREROUTING -i arif -p tcp -s 10.1.209.0/24 -d 172.23.21.200 --dpo
 #$IPT -t nat -A POSTROUTING -s 160.97.12.222  -d 192.168.21.0/24 -o ppp0 -j MASQUERADE
 #$IPT -t nat -A POSTROUTING -s 160.97.12.222 -d 100.102.0.1/32  -o ppp0 -j MASQUERADE
 
-tate --state NEW --dport 22 -m recent --set -j ACCEPT
-
 #STUFFS 
 SYSCTL=/sbin/sysctl
 
