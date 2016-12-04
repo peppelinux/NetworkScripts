@@ -17,19 +17,19 @@ tc qdisc del dev $IFNAME root
 tc qdisc add dev $IFNAME root handle 1: htb default 30
 
 # This creates a class called 1:1, which is direct descendant of root (the parent is 1:), this class gets assigned also an HTB qdisc, and then it sets a max rate of N mbits, with a burst of 15k
-tc class add dev $IFNAME parent 1: classid 1:1 htb rate 10mbit burst 15k
+tc class add dev $IFNAME parent 1: classid 1:1 htb rate 10mbit burst 10k
 
 # Class 1:10, which has a rate of 6mbit but 10mbit if anyone else are using internet
-tc class add dev $IFNAME parent 1:1 classid 1:5 htb rate 6mbit ceil 10mbit burst 15k
+tc class add dev $IFNAME parent 1:1 classid 1:5 htb rate 6mbit ceil 10mbit burst 10k
 
 # Class 1:10, which has a rate of 6mbit but 10mbit if anyone else are using internet
-tc class add dev $IFNAME parent 1:1 classid 1:10 htb rate 4mbit ceil 8mbit burst 15k
+tc class add dev $IFNAME parent 1:1 classid 1:10 htb rate 4mbit ceil 8mbit burst 10k
 
 # Class 1:20, which has a rate of 3mbit
-tc class add dev $IFNAME parent 1:1 classid 1:20 htb rate 2mbit ceil 4mbit burst 15k
+tc class add dev $IFNAME parent 1:1 classid 1:20 htb rate 2mbit ceil 4mbit burst 10k
 
 # Class 1:30, which has a rate of ...
-tc class add dev $IFNAME parent 1:1 classid 1:30 htb rate 1mbit ceil 2mbit burst 15k
+tc class add dev $IFNAME parent 1:1 classid 1:30 htb rate 1mbit ceil 2mbit burst 10k
 
 # controllo le classi inserite
 #tc class show dev $IFNAME
