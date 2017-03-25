@@ -190,12 +190,12 @@ $IPT -A TCP_SERVICES -p tcp -m tcp --dport 8002 -j ACCEPT
 # SSH
 $IPT -A TCP_SERVICES -p tcp -m tcp --dport $SSH_PORT --syn -j LOG --log-prefix "incoming SSH CONNECTION " --log-level 4 -m limit --limit 1/minute --limit-burst 5
 #$IPT -A TCP_SERVICES -p tcp -m tcp --dport 2222 -j ACCEPT
-# in ssh accettiamo max 10 connessioni ogni 2 minuti
 
+# Se in 60 minuti vengono conteggiati 
 # --rcheck: Check if the source address of the packet is  currently  in  the list.
-$IPT -A TCP_SERVICES -p tcp --dport $SSH_PORT -m state --state NEW -m recent --name sshguys  --rcheck --seconds 120 --hitcount 11 -j LOG --log-prefix "BLOCKED SSH CONNECTION " --log-level 4 -m limit --limit 1/minute --limit-burst 5
+$IPT -A TCP_SERVICES -p tcp --dport $SSH_PORT -m state --state NEW -m recent --name sshguys  --rcheck --seconds 60 --hitcount 11 -j LOG --log-prefix "BLOCKED SSH CONNECTION " --log-level 4 -m limit --limit 1/minute --limit-burst 5
 # --update: Like  --rcheck,  except it will update the "last seen" timestamp if it matches.
-$IPT -A TCP_SERVICES -p tcp --dport $SSH_PORT -m state --state NEW -m recent --name sshguys  --update --seconds 120 --hitcount 11 -j DROP
+$IPT -A TCP_SERVICES -p tcp --dport $SSH_PORT -m state --state NEW -m recent --name sshguys  --update --seconds 60 --hitcount 11 -j DROP
 $IPT -A TCP_SERVICES -p tcp --dport $SSH_PORT -m state --state NEW,ESTABLISHED -m recent --name sshguys --set -j ACCEPT
 
 # loggo a caso connessioni di porte usate spesso dai portscanners
