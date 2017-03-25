@@ -198,6 +198,20 @@ $IPT -A TCP_SERVICES -p tcp --dport $SSH_PORT -m state --state NEW,ESTABLISHED -
 $IPT -A TCP_SERVICES -p tcp -m tcp --dport 5190 -j LOG --log-prefix "Connessione su PORTA rAnDoM molto strana (NMAP ?)" --log-level 4 -m limit --limit 1/second --limit-burst 1
 $IPT -A TCP_SERVICES -p tcp -m tcp --dport 1863 -j LOG --log-prefix "Connessione su PORTA rAnDoM molto strana (NMAP ?)" --log-level 4 -m limit --limit 1/second --limit-burst 1
 
+# e.g. to remove entries with less then 5 packets / hour:
+
+#-A TCP_SERVICES -m recent --rcheck --seconds 3600 --hitcount 5 --rsource -j RETURN
+#-A TCP_SERVICES -m recent --remove
+#The first rule matches source ips with >= 5 pkts/hour and leaves TEST chain via RETURN target. The second rule removes not matched / not filtered packets ( with rate below 5 pkts/hour) from default recent list.
+
+#You can remove from userland with:
+
+#echo -addr >/proc/net/xt_recent/DEFAULT
+#          to remove addr from the DEFAULT list
+#echo / >/proc/net/xt_recent/DEFAULT
+#          to flush the DEFAULT list (remove all entries).
+#e.g. to remove ip 192.168.4.7 from default recent list:
+#echo -192.168.4.7 >/proc/net/xt_recent/sshguys
 
 ##############################
 # Infine mando tutto a quel paese
