@@ -1,0 +1,8 @@
+ip route show
+ip route list
+ip route get 10.34.56.23
+
+ip route add 10.97.60.100 via 10.38.60.5
+ip route del 10.97.60.100
+
+
