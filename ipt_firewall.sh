@@ -17,14 +17,16 @@ MNET_PREFIX=10.97.0
 
 MNET=${MNET_PREFIX}.0/24
 
-ME=${MNET_PREFIX}.38
+ME=${MNET_PREFIX}.30
 
 TRUSTED_NODES=${MNET_PREFIX}.33,\
 ${MNET_PREFIX}.32,\
 ${MNET_PREFIX}.34,\
 ${MNET_PREFIX}.27,\
-${MNET_PREFIX}.30,\
-${MNET_PREFIX}.100
+${MNET_PREFIX}.38,\
+${MNET_PREFIX}.100,\
+10.38.60.1,\
+10.38.61.1
 #160.97.104.19
 
 # vpn tunnel
@@ -40,15 +42,16 @@ ${IFACE}
 SSH_PORT=2222
 
 # nota 224.0.0.0 è igmp multicast :)
-FAKE_NODES=10.0.0.0/8,\
+FAKE_NODES=0.0.0.0/8,\
 169.254.0.0/16,\
 172.16.0.0/12,\
 127.0.0.0/8,\
 224.0.0.0/4,\
 240.0.0.0/5,\
-0.0.0.0/8,\
 239.255.255.0/24,\
 255.255.255.255
+#10.0.0.0/8,\
+
 
 UDP_TRUSTED_PORTS=\
 53,\
@@ -59,7 +62,9 @@ UDP_SERVICES=\
 1194,\
 1812,\
 1813,\
-56000-58000
+56000:58000,\
+53200:53900,\
+33434:33655
 
 set -x
 
@@ -90,6 +95,7 @@ $IPT -X
 # Creo le mie chains
 ##############################
 
+$IPT -N AMICI
 $IPT -N INDESIDERATI
 $IPT -N DOS_FILTER
 $IPT -N ICMP
@@ -169,18 +175,20 @@ $IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags RST RST -j DROP
 ##############################
 # everything by our friends
 ##############################
-$IPT -A INPUT -s $TRUSTED_NODES -j ACCEPT
+$IPT -A INPUT -j AMICI
+$IPT -A AMICI -s $TRUSTED_NODES -j ACCEPT
+$IPT -A AMICI -s $TRUSTED_NETWORKS -j ACCEPT
 
 ######
 # ICMP
 ######
 $IPT -A INPUT -p ICMP -j ICMP
-
+#$IPT -I ICMP 1 -p icmp --icmp-type 8 -j ACCEPT
 # all but the floods :)
-$IPT -A ICMP -p icmp -m limit --limit  1/s --limit-burst 1 -j ACCEPT
+$IPT -A ICMP -p icmp -m limit --limit  3/s --limit-burst 6 -j ACCEPT
 #$IPT -A ICMP -p icmp --icmp-type echo-reply   -m limit --limit  1/s --limit-burst 1 -j ACCEPT
-#$IPT -I ICMP 1 -p icmp --icmp-type 8 -m limit --limit  1/s --limit-burst 1 -j ACCEPT
-$IPT -A ICMP -j DROP
+$IPT -A ICMP -j ACCEPT
+#$IPT -A ICMP -j REJECT
 #
 
 #####
@@ -203,7 +211,7 @@ do
 done
 
 # eppoi il vuoto
-$IPT -A UDP -p udp -j DROP
+$IPT -A UDP -p udp -j REJECT
 #
 
 ##############################
@@ -226,6 +234,8 @@ $IPT -A INPUT -p tcp  -j TCP_SERVICES
 
 # SERVIZI
 #$IPT -A TCP_SERVICES -p tcp -m tcp --dport 25 -j ACCEPT
+$IPT -A TCP_SERVICES -p tcp -m tcp --dport 3306 -s 160.97.104.19 -j ACCEPT
+
 $IPT -A TCP_SERVICES -p tcp -m tcp --dport 443 -j ACCEPT
 $IPT -A TCP_SERVICES -p tcp -m tcp --dport 80 -j ACCEPT
 $IPT -A TCP_SERVICES -p tcp -m tcp --dport 9000 -j ACCEPT
@@ -271,7 +281,7 @@ $IPT -A INPUT -j REJECT
 # OUTPUT 
 ########
 
-$IPT -A OUTPUT -p icmp --icmp-type echo-request  -m limit --limit  1/s --limit-burst 1 -j ACCEPT
+#$IPT -A OUTPUT -p icmp --icmp-type echo-request  -m limit --limit  1/s --limit-burst 1 -j ACCEPT
 $IPT -A OUTPUT  -s $FAKE_NODES  -j DROP
 
 
@@ -432,3 +442,4 @@ $SYSCTL -w kernel.pid_max=65536
  
 #Increase system IP port limits
 # net.ipv4.ip_local_port_range = 2000 65000
+
