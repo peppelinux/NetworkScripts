@@ -1,0 +1,4 @@
+# debug on target
+sudo tcpdump -i eth0 '(udp and port 7) or (udp and port 9)'
+
+ether-wake -i eth0 38:2c:4a:0e:bd:ab
