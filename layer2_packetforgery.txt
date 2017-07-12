@@ -1,0 +1,29 @@
+
+# on debian
+# forge fake arp response
+sysctl -w  net.ipv4.ip_nonlocal_bind=1 
+arping -aDUPp -i eth2 -S 10.87.7.89 -s 11:ff:22:11:11:11 10.87.7.89
+
+# on openwrt
+# same arpspoof effect :)
+sysctl -w  net.ipv4.ip_nonlocal_bind=1
+arping -A  -I eth0.2 10.87.7.1 
+
+# on openwrt hping3 scan
+hping3 --scan known 10.87.7.1 -S
+
+# arpwatch datetime :)
+cat /var/lib/arpwatch/arp.dat  | sort -k 3 | gawk '{ print strftime("%d/%m/%Y %H:%M", $3),$1,$2}'
+
+# netdiscover
+netdiscover -i eth0.2 -r 10.7.12.0/24 -t 33 -m
+
+#
+# send an ARP reply, saying "192.168.1.77 is at 0:1:2:3:4:5", sending it to 192.168.1.14 who is at 00:76:12:a2:44:70
+nemesis arp -d eth3 -r -S 192.168.1.77 -h 0:1:2:3:4:5 -D 192.168.1.14 -m 00:76:12:a2:44:70
+
+# send an ICMP ECHO "ping" packet to 192.168.1.14 with spoofed source 192.168.1.77
+nemesis icmp -qE -S 192.168.1.77 -D 192.168.1.14
+
+# start iperf in background without creating std output file
+nohup iperf -s >/dev/null 2>&1 &
