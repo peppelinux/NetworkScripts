@@ -50,7 +50,9 @@ tc filter add dev $IFNAME protocol ip parent 1: prio 1 handle 30 fw flowid 1:30
 
 # adesso assegno con iptables quello che preferisco
 iptables -A PREROUTING -t mangle -i $IFNAME -j MARK --set-mark 20
-iptables -A POSTROUTING -t mangle -o $IFNAME -j MARK --set-mark 30
+
+# per banda outgoing meglio htb
+# https://www.cyberciti.biz/faq/linux-traffic-shaping-using-tc-to-control-http-traffic/
 
 #iptables -t mangle -L PREROUTING -n -v
 
