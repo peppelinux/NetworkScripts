@@ -1,0 +1,15 @@
+# http://www.ayomaonline.com/security/analyzing-network-traffic-with-openwrt/
+
+OpenWrt Router : 192.168.9.1
+Android Device : 192.168.9.121
+Laptop with Wireshark : 192.168.9.183
+
+# Run following iptables command to “forward a copy of each packet with source-IP (-s) on out interface (-o) to gateway-IP (–gateway) ”
+iptables -A POSTROUTING -t mangle -o br-lan ! -s 192.168.9.121 -j TEE --gateway 192.168.9.183
+
+# Run following iptables command to “forward a copy of each packet with destination-IP (-d) on in interface (-i) to gateway-IP (–gateway) ”
+iptables -A PREROUTING -t mangle -i br-lan ! -d 192.168.9.121 -j TEE --gateway 192.168.9.183
+
+# Start capturing traffic on Wireshark with below filter applied :
+(ip.src == 192.168.9.121) || (ip.dst == 192.168.9.121)
+
