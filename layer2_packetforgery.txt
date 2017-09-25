@@ -19,8 +19,14 @@ cat /var/lib/arpwatch/arp.dat  | sort -k 3 | gawk '{ print strftime("%d/%m/%Y %H
 netdiscover -i eth0.2 -r 10.7.12.0/24 -t 33 -m
 
 #
-# send an ARP reply, saying "192.168.1.77 is at 0:1:2:3:4:5", sending it to 192.168.1.14 who is at 00:76:12:a2:44:70
+# send 1 ARP reply, saying "192.168.1.77 is at 0:1:2:3:4:5", sending it to 192.168.1.14 who is at 00:76:12:a2:44:70
 nemesis arp -d eth3 -r -S 192.168.1.77 -h 0:1:2:3:4:5 -D 192.168.1.14 -m 00:76:12:a2:44:70
+
+# to be unsolecitated, continous, arp response, it could run into a while :)
+while [ 1 ] ;
+    do sleep 1 && 
+    nemesis arp -d eth0 -r -S 10.97.60.33 -h 98:90:96:A6:4F:DB -D 10.97.60.245 -m 00:16:b9:d4:9a:00;
+done
 
 # send an ICMP ECHO "ping" packet to 192.168.1.14 with spoofed source 192.168.1.77
 nemesis icmp -qE -S 192.168.1.77 -D 192.168.1.14
