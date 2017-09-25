@@ -28,6 +28,11 @@ while [ 1 ] ;
     nemesis arp -d eth0 -r -S 10.97.60.33 -h 98:90:96:A6:4F:DB -D 10.97.60.245 -m 00:16:b9:d4:9a:00;
 done
 
+# if nemensis could not be installed from your standard REPO you have to compile it by hands.
+# first install libnet from nemensis repo (http://www.packetfactory.net/libnet/dist/deprecated/libnet-1.0.2a.tar.gz)
+./configure --with-libnet-includes=/home/user/Progs/Libnet-1.0.2a/include --with-libnet-libraries=/usr/local/lib/
+make && make install
+
 # send an ICMP ECHO "ping" packet to 192.168.1.14 with spoofed source 192.168.1.77
 nemesis icmp -qE -S 192.168.1.77 -D 192.168.1.14
 
