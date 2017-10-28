@@ -5,7 +5,7 @@ export IPT=iptables
 export SSH_PORT=2222
 export HITCOUNT=3 # 2 syn connection (<3)
 export SECONDS=20 # in 20 seconds are allowed
-export CHAIN_NAME=TCP_max2_in_20seconds
+export CHAIN_NAME=TCP_max2_20sec
 
 # --rcheck: Check if the source address of the packet is  currently  in  the list.
 # --update: Like  --rcheck,  except it will update the "last seen" timestamp if it matches.
