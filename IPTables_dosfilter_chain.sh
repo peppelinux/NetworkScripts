@@ -9,7 +9,7 @@ $IPT -N DOS_FILTER
 ##############################
 echo "DoS filters"
 
-$IPT -A INPUT -i ens18 -j DOS_FILTER
+$IPT -A INPUT -i $PUB_IF -j DOS_FILTER
 
 
 ########################################
