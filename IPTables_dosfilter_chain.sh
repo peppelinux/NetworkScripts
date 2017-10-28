@@ -5,12 +5,27 @@ PUB_IF=ens33
 $IPT -N DOS_FILTER
 
 ##############################
-# evitiamo i pacchetti ideati per farmi dannare
-##############################
+# evitiamo i pacchetti ideati per scocciare
 ##############################
 echo "DoS filters"
 
 $IPT -A INPUT -i ens18 -j DOS_FILTER
+
+
+########################################
+# Filtro SMURF, limit prima dei DROP successivi
+########################################
+$IPT -A DOS_FILTER -p icmp -m icmp --icmp-type address-mask-request -j DROP
+$IPT -A DOS_FILTER -p icmp -m icmp --icmp-type timestamp-request -j DROP
+$IPT -A DOS_FILTER -p icmp -m icmp -m limit --limit 1/second -j ACCEPT
+
+$IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags RST RST -m limit --limit 2/second --limit-burst 2 -j ACCEPT
+$IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags RST RST -j DROP
+
+
+###############
+# Festa del DROP
+###############
 $IPT  -A DOS_FILTER -i ${PUB_IF} -p tcp --tcp-flags ALL FIN,URG,PSH -j DROP
 $IPT  -A DOS_FILTER -i ${PUB_IF} -p tcp --tcp-flags ALL ALL -j DROP
  
@@ -35,8 +50,34 @@ $IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags FIN,RST FIN,RST -j DRO
 $IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags FIN,ACK FIN -j DROP
 $IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags ACK,URG URG -j DROP
 
-##############################
-# evitiamo gli attacchi smurf che disconnettono tutto da tutti
-##############################
-$IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags RST RST -m limit --limit 2/second --limit-burst 2 -j ACCEPT
-$IPT -A DOS_FILTER -i ${PUB_IF} -p tcp -m tcp --tcp-flags RST RST -j DROP
+#####################################################
+# ICMP Policy
+#####################################################
+$IPT -A DOS_FILTER -p icmp --icmp-type echo-reply -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPT -A DOS_FILTER -p icmp --icmp-type echo-request -m limit --limit 5/s -m state --state NEW -j ACCEPT
+$IPT -A DOS_FILTER -p icmp --icmp-type destination-unreachable -m state --state NEW -j ACCEPT
+$IPT -A DOS_FILTER -p icmp --icmp-type time-exceeded -m state --state NEW -j ACCEPT
+$IPT -A DOS_FILTER -p icmp --icmp-type timestamp-request -m state --state NEW -j ACCEPT
+$IPT -A DOS_FILTER -p icmp --icmp-type timestamp-reply -m state --state ESTABLISHED,RELATED -j ACCEPT
+$IPT -A DOS_FILTER -p icmp -m icmp --icmp-type 8 -j ACCEPT
+$IPT -A OUTPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+
+
+###############################################
+# Mi difendo dallo spoofing
+###############################################
+$IPT -A DOS_FILTER -s 10.0.0.0/8 -j DROP 
+$IPT -A DOS_FILTER -s 169.254.0.0/16 -j DROP
+$IPT -A DOS_FILTER -s 172.16.0.0/12 -j DROP
+$IPT -A DOS_FILTER -s 127.0.0.0/8 -j DROP
+$IPT -A DOS_FILTER -s 192.168.0.0/24 -j DROP
+$IPT -A DOS_FILTER -s 192.168.1.0/24 -j DROP
+$IPT -A DOS_FILTER -s 192.168.10.0/24 -j DROP
+$IPT -A DOS_FILTER -s 224.0.0.0/4 -j DROP
+$IPT -A DOS_FILTER -d 224.0.0.0/4 -j DROP
+$IPT -A DOS_FILTER -s 240.0.0.0/5 -j DROP
+$IPT -A DOS_FILTER -d 240.0.0.0/5 -j DROP
+$IPT -A DOS_FILTER -s 0.0.0.0/8 -j DROP
+$IPT -A DOS_FILTER -d 0.0.0.0/8 -j DROP
+$IPT -A DOS_FILTER -d 239.255.255.0/24 -j DROP
+$IPT -A DOS_FILTER -d 255.255.255.255 -j DROP
