@@ -1,16 +1,20 @@
+#!/bin/bash
+set -e
+set -x
+
 IPT="/sbin/iptables"
 IPTABLES=$IPT
 PUB_IF=ens33
 
+#######
+# creo la chain
+#######
 $IPT -N DOS_FILTER
 
 ##############################
 # evitiamo i pacchetti ideati per scocciare
 ##############################
-echo "DoS filters"
-
 $IPT -A INPUT -i $PUB_IF -j DOS_FILTER
-
 
 ########################################
 # Filtro SMURF, limit prima dei DROP successivi
