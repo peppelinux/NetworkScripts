@@ -65,23 +65,3 @@ $IPT -A DOS_FILTER -p icmp --icmp-type timestamp-request -m state --state NEW -j
 $IPT -A DOS_FILTER -p icmp --icmp-type timestamp-reply -m state --state ESTABLISHED,RELATED -j ACCEPT
 $IPT -A DOS_FILTER -p icmp -m icmp --icmp-type 8 -j ACCEPT
 $IPT -A OUTPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
-
-
-###############################################
-# Mi difendo dallo spoofing
-###############################################
-$IPT -A DOS_FILTER -s 10.0.0.0/8 -j DROP 
-$IPT -A DOS_FILTER -s 169.254.0.0/16 -j DROP
-$IPT -A DOS_FILTER -s 172.16.0.0/12 -j DROP
-$IPT -A DOS_FILTER -s 127.0.0.0/8 -j DROP
-$IPT -A DOS_FILTER -s 192.168.0.0/24 -j DROP
-$IPT -A DOS_FILTER -s 192.168.1.0/24 -j DROP
-$IPT -A DOS_FILTER -s 192.168.10.0/24 -j DROP
-$IPT -A DOS_FILTER -s 224.0.0.0/4 -j DROP
-$IPT -A DOS_FILTER -d 224.0.0.0/4 -j DROP
-$IPT -A DOS_FILTER -s 240.0.0.0/5 -j DROP
-$IPT -A DOS_FILTER -d 240.0.0.0/5 -j DROP
-$IPT -A DOS_FILTER -s 0.0.0.0/8 -j DROP
-$IPT -A DOS_FILTER -d 0.0.0.0/8 -j DROP
-$IPT -A DOS_FILTER -d 239.255.255.0/24 -j DROP
-$IPT -A DOS_FILTER -d 255.255.255.255 -j DROP
