@@ -2,3 +2,10 @@
 sudo tcpdump -i eth0 '(udp and port 7) or (udp and port 9)'
 
 ether-wake -i eth0 38:2c:4a:0e:bd:ab
+
+# Forward a port to the broadcast address
+# Most routers do not allow to forward to broadcast, however if you can get shell access to your router (through telnet, ssh, serial cable, etc), you can implement this workaround:
+ip neighbor add 192.168.1.254 lladdr FF:FF:FF:FF:FF:FF dev net0
+
+# A command can be run each time the computer is (re)booted using "@reboot" in a crontab. First, make sure cron is enabled, and then edit a crontab for the root user that contains the following line:
+@reboot /usr/bin/ethtool -s [net-device] wol g
