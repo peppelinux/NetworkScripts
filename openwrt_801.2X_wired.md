@@ -28,12 +28,17 @@ Enable on boot
 Create /etc/init.d/wpa_wired
 ````
 #!/bin/sh /etc/rc.common
- 
+
 START=99
- 
+
 start() {
     echo start
-    wpa_supplicant -D wired -i eth0 -c /etc/config/wpa_wired.conf &
+    wpa_supplicant -D wired -i eth0.2 -c /etc/config/wpa_wired.conf &
+}
+
+stop() {
+    echo stop
+    kill -TERM `pidof wpa_supplicant`
 }
 ````
 
