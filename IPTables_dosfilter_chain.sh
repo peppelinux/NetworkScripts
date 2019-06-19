@@ -19,6 +19,10 @@ $IPT -A INPUT -i $PUB_IF -j DOS_FILTER
 ########################################
 # Filtro SMURF, limit prima dei DROP successivi
 ########################################
+
+# CVE-2019-11479: SACK ddos mitigation
+$IPT -A DOS_FILTER -p tcp -m tcpmss --mss 1:500 -j DROP
+
 $IPT -A DOS_FILTER -p icmp -m icmp --icmp-type address-mask-request -j DROP
 $IPT -A DOS_FILTER -p icmp -m icmp --icmp-type timestamp-request -j DROP
 $IPT -A DOS_FILTER -p icmp -m icmp -m limit --limit 1/second -j ACCEPT
