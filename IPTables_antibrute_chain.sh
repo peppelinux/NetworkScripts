@@ -1,22 +1,31 @@
-# this is a customizable IpTables Chain that could be used to detect and reject bruteforce attack and other resource 
-# exaustion problems derived from too many connection from the same src (syn flood, brute force, others).
+#!/bin/bash
+set -e
+set -x
 
-export IPT=iptables
-export SSH_PORT=2222
-export HITCOUNT=3 # 2 syn connection (<3)
-export SECONDS=20 # in 20 seconds are allowed
-export CHAIN_NAME=TCP_max2_20sec
+IPT="/sbin/iptables"
+IPTABLES=$IPT
+CHAIN=BOGUS_NET
 
-# --rcheck: Check if the source address of the packet is  currently  in  the list.
-# --update: Like  --rcheck,  except it will update the "last seen" timestamp if it matches.
+#######
+# creo la chain
+#######
+$IPT -N $CHAIN
 
-# this chain permits a maximum number of connection attempts defined in its vars
-$IPT -N $CHAIN_NAME
-$IPT -A $CHAIN_NAME -m state --state NEW -m recent --set --name sshguys --rsource
-$IPT -A $CHAIN_NAME -m state  --state NEW  -m recent --rcheck --seconds $SECONDS --hitcount $HITCOUNT --rttl --name sshguys --rsource -j LOG --log-prefix "BLOCKED TCP Connection ($CHAIN_NAME)" --log-level 4 -m limit --limit 1/minute --limit-burst 5
-$IPT -A $CHAIN_NAME -p tcp -m tcp -m recent --rcheck --seconds $SECONDS --hitcount $HITCOUNT --rttl --name sshguys --rsource -j REJECT --reject-with tcp-reset
-$IPT -A $CHAIN_NAME -p tcp -m tcp -m recent --update --seconds $SECONDS --hitcount $HITCOUNT --rttl --name sshguys --rsource -j REJECT --reject-with tcp-reset
-$IPT -A $CHAIN_NAME -m state --state NEW,ESTABLISHED  -j ACCEPT
-
-# Apply this policy on every ssh connection
-$IPT -A INPUT -p tcp -m tcp --dport $SSH_PORT -j $CHAIN_NAME
+###############################################
+# Mi difendo dallo spoofing
+###############################################
+$IPT -A $CHAIN -s 10.0.0.0/8 -j DROP 
+$IPT -A $CHAIN -s 169.254.0.0/16 -j DROP
+$IPT -A $CHAIN -s 172.16.0.0/12 -j DROP
+$IPT -A $CHAIN -s 127.0.0.0/8 -j DROP
+$IPT -A $CHAIN -s 192.168.0.0/24 -j DROP
+$IPT -A $CHAIN -s 192.168.1.0/24 -j DROP
+$IPT -A $CHAIN -s 192.168.10.0/24 -j DROP
+$IPT -A $CHAIN -s 224.0.0.0/4 -j DROP
+$IPT -A $CHAIN -d 224.0.0.0/4 -j DROP
+$IPT -A $CHAIN -s 240.0.0.0/5 -j DROP
+$IPT -A $CHAIN -d 240.0.0.0/5 -j DROP
+$IPT -A $CHAIN -s 0.0.0.0/8 -j DROP
+$IPT -A $CHAIN -d 0.0.0.0/8 -j DROP
+$IPT -A $CHAIN -d 239.255.255.0/24 -j DROP
+$IPT -A $CHAIN -d 255.255.255.255 -j DROP
