@@ -106,19 +106,12 @@ $IPT -t mangle -A PREROUTING -s 0.0.0.0/8 -j DROP
 $IPT -t mangle -A PREROUTING -s 240.0.0.0/5 -j DROP 
 $IPT -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP  
 
-### 6: Drop ICMP (you usually don't need this protocol) ### 
-$IPT -t mangle -A PREROUTING -p icmp -j DROP  
-
 ### 7: Drop fragments in all chains ### 
 $IPT -t mangle -A PREROUTING -f -j DROP  
 
 ### 8: Limit connections per source IP ### 
 $IPT -A DOS_FILTER -p tcp -m connlimit --connlimit-above 111 -j REJECT --reject-with tcp-reset  
-
-### 9: Limit RST packets ### 
-$IPT -A DOS_FILTER -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT 
-$IPT -A DOS_FILTER -p tcp --tcp-flags RST RST -j DROP  
-
+  
 ### 10: Limit new TCP connections per second per source IP ### 
 $IPT -A DOS_FILTER -p tcp -m conntrack --ctstate NEW -m limit --limit 60/s --limit-burst 20 -j ACCEPT 
 $IPT -A DOS_FILTER -p tcp -m conntrack --ctstate NEW -j DROP  
