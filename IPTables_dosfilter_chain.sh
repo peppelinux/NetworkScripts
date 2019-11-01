@@ -25,7 +25,7 @@ $IPT -A DOS_FILTER -p tcp -m tcpmss --mss 1:500 -j DROP
 
 $IPT -A DOS_FILTER -p icmp -m icmp --icmp-type address-mask-request -j DROP
 $IPT -A DOS_FILTER -p icmp -m icmp --icmp-type timestamp-request -j DROP
-$IPT -A DOS_FILTER -p icmp -m icmp -m limit --limit 1/second -j ACCEPT
+#$IPT -A DOS_FILTER -p icmp -m icmp -m limit --limit 1/second -j ACCEPT
 
 $IPT -A DOS_FILTER -p tcp -m tcp --tcp-flags RST RST -m limit --limit 2/second --limit-burst 2 -j ACCEPT
 $IPT -A DOS_FILTER -p tcp -m tcp --tcp-flags RST RST -j DROP
