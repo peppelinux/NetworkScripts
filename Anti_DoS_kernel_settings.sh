@@ -57,8 +57,12 @@ net.ipv4.tcp_synack_retries = 1
 net.ipv4.tcp_syn_retries = 2 
 net.ipv4.tcp_max_syn_backlog = 16384 
 net.ipv4.tcp_timestamps = 1 
-net.ipv4.tcp_sack = 1 
-net.ipv4.tcp_fack = 1 
+#net.ipv4.tcp_sack = 1 
+#net.ipv4.tcp_fack = 1 
+# piuttosto disabilito sack
+net.ipv4.tcp_sack = 0
+net.ipv4.tcp_dsack = 0
+net.ipv4.tcp_fack = 0
 net.ipv4.tcp_ecn = 2 
 net.ipv4.tcp_fin_timeout = 10 
 net.ipv4.tcp_keepalive_time = 600 
